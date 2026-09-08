@@ -3,12 +3,12 @@
 import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabaseBanking } from '../../lib/supabase-banking'
-import CurrencyBadge from '../../components/CurrencyBadge'
-import { getColumnsForCategory, POLICY_TYPE_LABEL } from '../../lib/productColumns'
+import { POLICY_TYPE_LABEL } from '../../lib/productColumns'
 import AdSlot from '../../components/AdSlot'
 import RemittanceCalculator from '../../components/RemittanceCalculator'
 import AlertSubscribeForm from '../../components/AlertSubscribeForm'
 import CreditCardBoard, { type CardBenefit, type CardProduct } from '../../components/CreditCardBoard'
+import ProductCard, { type ProductCardData } from '../../components/ProductCard'
 import { CARD_CATEGORY_SLUGS } from '../../lib/productColumns'
 
 type Category = { id: string; slug: string; name: string; description: string | null }
@@ -63,6 +63,7 @@ type ProductRow = {
   opening_fee_usd: number | null
   reload_limit_usd: number | null
   reload_limit_period: string | null
+  image_url: string | null
 }
 
 type SponsoredRow = {
@@ -109,7 +110,7 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
       const { data: productRows } = await supabaseBanking
         .from('products')
         .select(
-          'id, name, slug, currency, interest_rate, monthly_fee_usd, min_opening_balance_usd, loan_term_min_months, loan_term_max_months, loan_amount_min_usd, loan_amount_max_usd, annual_fee_usd, credit_limit_min_usd, credit_limit_max_usd, min_transfer_usd, max_transfer_usd, transfer_fee_note, delivery_methods, avg_delivery_time, source_url, how_to_apply_url, data_confidence, card_network, card_tier, requirements, policy_type, coverage_summary, premium_usd_min, premium_period, investment_type, min_investment_usd, min_investment_ves, return_rate_min, return_rate_max, return_note, international_use, contactless, description, network_scope, affiliated_merchant, opening_fee_usd, reload_limit_usd, reload_limit_period, institutions(slug, name, supports_pago_movil)'
+          'id, name, slug, currency, interest_rate, monthly_fee_usd, min_opening_balance_usd, loan_term_min_months, loan_term_max_months, loan_amount_min_usd, loan_amount_max_usd, annual_fee_usd, credit_limit_min_usd, credit_limit_max_usd, min_transfer_usd, max_transfer_usd, transfer_fee_note, delivery_methods, avg_delivery_time, source_url, how_to_apply_url, data_confidence, card_network, card_tier, requirements, policy_type, coverage_summary, premium_usd_min, premium_period, investment_type, min_investment_usd, min_investment_ves, return_rate_min, return_rate_max, return_note, international_use, contactless, description, network_scope, affiliated_merchant, opening_fee_usd, reload_limit_usd, reload_limit_period, image_url, institutions(slug, name, supports_pago_movil)'
         )
         .eq('category_id', cat.id)
         .eq('active', true)
@@ -154,7 +155,7 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
           const { data: sponsoredProductRows } = await supabaseBanking
             .from('products')
             .select(
-              'id, name, slug, currency, interest_rate, monthly_fee_usd, min_opening_balance_usd, loan_term_min_months, loan_term_max_months, loan_amount_min_usd, loan_amount_max_usd, annual_fee_usd, credit_limit_min_usd, credit_limit_max_usd, min_transfer_usd, max_transfer_usd, transfer_fee_note, delivery_methods, avg_delivery_time, source_url, how_to_apply_url, data_confidence, card_network, card_tier, requirements, policy_type, coverage_summary, premium_usd_min, premium_period, investment_type, min_investment_usd, min_investment_ves, return_rate_min, return_rate_max, return_note, international_use, contactless, description, network_scope, affiliated_merchant, opening_fee_usd, reload_limit_usd, reload_limit_period, institutions(slug, name, supports_pago_movil)'
+              'id, name, slug, currency, interest_rate, monthly_fee_usd, min_opening_balance_usd, loan_term_min_months, loan_term_max_months, loan_amount_min_usd, loan_amount_max_usd, annual_fee_usd, credit_limit_min_usd, credit_limit_max_usd, min_transfer_usd, max_transfer_usd, transfer_fee_note, delivery_methods, avg_delivery_time, source_url, how_to_apply_url, data_confidence, card_network, card_tier, requirements, policy_type, coverage_summary, premium_usd_min, premium_period, investment_type, min_investment_usd, min_investment_ves, return_rate_min, return_rate_max, return_note, international_use, contactless, description, network_scope, affiliated_merchant, opening_fee_usd, reload_limit_usd, reload_limit_period, image_url, institutions(slug, name, supports_pago_movil)'
             )
             .in('id', productIds)
           const merged = ((sponsoredProductRows as unknown as ProductRow[]) ?? []).map((p) => {
@@ -244,6 +245,15 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
     disclosure_label: p.disclosure_label,
     network_scope: p.network_scope,
     affiliated_merchant: p.affiliated_merchant,
+    description: p.description,
+    image_url: p.image_url,
+  })
+
+  const toProductCardData = (p: ProductRow & { disclosure_label?: string }): ProductCardData => ({
+    ...p,
+    institutions: p.institutions
+      ? { slug: p.institutions.slug, name: p.institutions.name, supports_pago_movil: p.institutions.supports_pago_movil }
+      : null,
   })
 
   const availableCountries = isRemesas
@@ -287,7 +297,6 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
   }, null)
 
   const allRows = [...sponsoredProducts, ...visibleProducts]
-  const columns = getColumnsForCategory(slug)
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
@@ -406,112 +415,18 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
           vuelve pronto.
         </p>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-100">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 text-left text-gray-500">
-                <th className="px-4 py-2 font-medium">Banco / producto</th>
-                <th className="px-4 py-2 font-medium">Moneda</th>
-                {columns.map((col) => (
-                  <th key={col.key} className="px-4 py-2 font-medium">
-                    {col.header}
-                  </th>
-                ))}
-                <th className="px-4 py-2" />
-              </tr>
-            </thead>
-            <tbody>
-              {sponsoredProducts.map((p) => {
-                const productUrl = p.how_to_apply_url ?? p.source_url
-                return (
-                  <tr key={`sponsored-${p.id}`} className="border-t border-gray-100 bg-[#FDF6EA]">
-                    <td className="px-4 py-3 font-medium text-gray-900">
-                      {p.institutions?.name ?? '—'} —{' '}
-                      {productUrl ? (
-                        <a
-                          href={productUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-teal-700 hover:underline"
-                        >
-                          {p.name} ↗
-                        </a>
-                      ) : (
-                        p.name
-                      )}
-                      <span className="ml-2 rounded-full bg-[#FAEEDA] px-2 py-0.5 text-[10px] font-medium text-[#854F0B]">
-                        {p.disclosure_label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3"><CurrencyBadge currency={p.currency} /></td>
-                    {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-3 text-gray-700">
-                        {col.render(p)}
-                      </td>
-                    ))}
-                    <td className="px-4 py-3 text-right">
-                      {p.institutions ? (
-                        <Link
-                          href={`/bancos/${p.institutions.slug}`}
-                          className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
-                        >
-                          Ver →
-                        </Link>
-                      ) : null}
-                    </td>
-                  </tr>
-                )
-              })}
-              {visibleProducts.map((p) => {
-                const productUrl = p.how_to_apply_url ?? p.source_url
-                return (
-                  <tr key={p.id} className={`border-t border-gray-100 ${p.id === bestRateId ? 'bg-[#F4FBF8]' : ''}`}>
-                    <td className="px-4 py-3 font-medium text-gray-900">
-                      {p.institutions?.name ?? '—'} —{' '}
-                      {productUrl ? (
-                        <a
-                          href={productUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-teal-700 hover:underline"
-                        >
-                          {p.name} ↗
-                        </a>
-                      ) : (
-                        p.name
-                      )}
-                      {p.id === bestRateId ? (
-                        <span className="ml-2 rounded-full bg-[#EAF3DE] px-2 py-0.5 text-[10px] font-medium text-[#3B6D11]">
-                          Mejor tasa
-                        </span>
-                      ) : null}
-                      {p.data_confidence === 'low' ? (
-                        <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-500">
-                          Dato preliminar
-                        </span>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3"><CurrencyBadge currency={p.currency} /></td>
-                    {columns.map((col) => (
-                      <td key={col.key} className="px-4 py-3 text-gray-700">
-                        {col.render(p)}
-                      </td>
-                    ))}
-                    <td className="px-4 py-3 text-right">
-                      {p.institutions ? (
-                        <Link
-                          href={`/bancos/${p.institutions.slug}`}
-                          className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
-                        >
-                          Ver →
-                        </Link>
-                      ) : null}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+        <div className="space-y-3">
+          {sponsoredProducts.map((p) => (
+            <ProductCard key={`sponsored-${p.id}`} product={toProductCardData(p)} categorySlug={slug} />
+          ))}
+          {visibleProducts.map((p) => (
+            <ProductCard
+              key={p.id}
+              product={toProductCardData(p)}
+              categorySlug={slug}
+              highlight={p.id === bestRateId}
+            />
+          ))}
         </div>
       )}
       {sponsoredProducts.length > 0 ? (

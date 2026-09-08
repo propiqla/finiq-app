@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import CurrencyBadge from './CurrencyBadge'
+import InstitutionLogo from './InstitutionLogo'
 
 export type CardBenefit = { category: string; name: string; detail: string | null }
 
@@ -20,12 +21,16 @@ export type CardProduct = {
   source_url: string | null
   how_to_apply_url: string | null
   data_confidence: string
-  institutions: { slug: string; name: string } | null
+  institutions: { slug: string; name: string; website?: string | null } | null
   benefits: CardBenefit[]
   disclosure_label?: string
   network_scope: string | null
   affiliated_merchant: string | null
+  description: string | null
+  image_url: string | null
 }
+
+const truncate = (s: string, max: number) => (s.length > max ? `${s.slice(0, max).trimEnd()}…` : s)
 
 const BENEFIT_CATEGORY_LABEL: Record<string, string> = {
   viajes: 'Viajes',
@@ -62,10 +67,23 @@ function CardTile({ p, highlight }: { p: CardProduct; highlight?: boolean }) {
       }`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium text-gray-500">{p.institutions?.name ?? '—'}</p>
-          <h3 className="text-base font-semibold text-gray-900">{p.name}</h3>
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+        <div className="flex items-start gap-4">
+          {p.image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={p.image_url}
+              alt={p.name}
+              className="h-16 w-24 shrink-0 rounded-lg border border-gray-100 object-cover"
+            />
+          ) : (
+            <div className="flex h-16 w-24 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-gray-50">
+              <InstitutionLogo name={p.institutions?.name ?? ''} website={p.institutions?.website ?? null} className="h-9 w-9" />
+            </div>
+          )}
+          <div>
+            <p className="text-xs font-medium text-gray-500">{p.institutions?.name ?? '—'}</p>
+            <h3 className="text-base font-semibold text-gray-900">{p.name}</h3>
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <CurrencyBadge currency={p.currency} />
             {p.card_network ? (
               <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
@@ -96,6 +114,7 @@ function CardTile({ p, highlight }: { p: CardProduct; highlight?: boolean }) {
                 Dato preliminar
               </span>
             ) : null}
+            </div>
           </div>
         </div>
 
@@ -116,6 +135,10 @@ function CardTile({ p, highlight }: { p: CardProduct; highlight?: boolean }) {
           </div>
         </div>
       </div>
+
+      {p.description ? (
+        <p className="mt-3 text-sm leading-relaxed text-gray-600">{truncate(p.description, 260)}</p>
+      ) : null}
 
       {p.benefits.length > 0 ? (
         <div className="mt-3 flex flex-wrap gap-1.5">

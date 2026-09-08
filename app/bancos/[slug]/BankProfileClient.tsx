@@ -33,7 +33,11 @@ type ProductRow = {
   how_to_apply_url: string | null
   audience: string
   categories: { slug: string; name: string } | null
+  description: string | null
+  image_url: string | null
 }
+
+const truncate = (s: string, max: number) => (s.length > max ? `${s.slice(0, max).trimEnd()}…` : s)
 
 export default function BankProfileClient({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
@@ -67,7 +71,7 @@ export default function BankProfileClient({ params }: { params: Promise<{ slug: 
 
       const { data: productRows } = await supabaseBanking
         .from('products')
-        .select('id, name, slug, currency, interest_rate, monthly_fee_usd, source_url, how_to_apply_url, audience, categories(slug, name)')
+        .select('id, name, slug, currency, interest_rate, monthly_fee_usd, source_url, how_to_apply_url, audience, description, image_url, categories(slug, name)')
         .eq('institution_id', inst.id)
         .eq('active', true)
 
@@ -166,35 +170,60 @@ export default function BankProfileClient({ params }: { params: Promise<{ slug: 
         </p>
       ) : (
         <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {consumerProducts.map((p) => (
-            <div key={p.id} className="rounded-xl border border-gray-100 p-4 transition hover:border-gray-200">
-              <div className="flex items-center justify-between">
-                <Link
-                  href={`/categorias/${p.categories?.slug ?? ''}`}
-                  className="text-xs text-gray-400 hover:text-teal-700 hover:underline"
-                >
-                  {p.categories?.name}
-                </Link>
-                <CurrencyBadge currency={p.currency} />
+          {consumerProducts.map((p) => {
+            const productUrl = p.how_to_apply_url ?? p.source_url
+            return (
+              <div key={p.id} className="rounded-xl border border-gray-100 p-4 transition hover:border-gray-200">
+                <div className="flex items-start gap-3">
+                  {p.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={p.image_url}
+                      alt={p.name}
+                      className="h-12 w-16 shrink-0 rounded-md border border-gray-100 object-cover"
+                    />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <Link
+                        href={`/categorias/${p.categories?.slug ?? ''}`}
+                        className="text-xs text-gray-400 hover:text-teal-700 hover:underline"
+                      >
+                        {p.categories?.name}
+                      </Link>
+                      <CurrencyBadge currency={p.currency} />
+                    </div>
+                    <p className="mt-1 font-medium text-gray-900">{p.name}</p>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-700">
+                  {p.interest_rate != null ? `${p.interest_rate}% · ` : ''}
+                  {p.monthly_fee_usd != null ? `$${p.monthly_fee_usd}/mes` : 'Mantenimiento no verificado'}
+                </p>
+                {p.description ? (
+                  <p className="mt-2 text-xs leading-relaxed text-gray-500">{truncate(p.description, 140)}</p>
+                ) : null}
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <Link
+                    href={`/categorias/${p.categories?.slug ?? ''}`}
+                    className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
+                  >
+                    Ver detalles →
+                  </Link>
+                  {productUrl ? (
+                    <a
+                      href={productUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium text-gray-500 hover:text-teal-700 hover:underline"
+                    >
+                      Ver en el sitio del banco ↗
+                    </a>
+                  ) : null}
+                </div>
               </div>
-              {p.how_to_apply_url ?? p.source_url ? (
-                <a
-                  href={p.how_to_apply_url ?? p.source_url ?? undefined}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-1 block font-medium text-gray-900 hover:text-teal-700 hover:underline"
-                >
-                  {p.name} ↗
-                </a>
-              ) : (
-                <p className="mt-1 font-medium text-gray-900">{p.name}</p>
-              )}
-              <p className="mt-1 text-sm text-gray-700">
-                {p.interest_rate != null ? `${p.interest_rate}% · ` : ''}
-                {p.monthly_fee_usd != null ? `$${p.monthly_fee_usd}/mes` : 'Mantenimiento no verificado'}
-              </p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
@@ -204,28 +233,53 @@ export default function BankProfileClient({ params }: { params: Promise<{ slug: 
             Productos empresariales
           </h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {businessProducts.map((p) => (
-              <div key={p.id} className="rounded-xl border border-gray-100 p-4 transition hover:border-gray-200">
-                <Link
-                  href="/empresas"
-                  className="text-xs text-gray-400 hover:text-teal-700 hover:underline"
-                >
-                  {p.categories?.name}
-                </Link>
-                {p.how_to_apply_url ?? p.source_url ? (
-                  <a
-                    href={p.how_to_apply_url ?? p.source_url ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 block font-medium text-gray-900 hover:text-teal-700 hover:underline"
-                  >
-                    {p.name} ↗
-                  </a>
-                ) : (
-                  <p className="mt-1 font-medium text-gray-900">{p.name}</p>
-                )}
-              </div>
-            ))}
+            {businessProducts.map((p) => {
+              const productUrl = p.how_to_apply_url ?? p.source_url
+              return (
+                <div key={p.id} className="rounded-xl border border-gray-100 p-4 transition hover:border-gray-200">
+                  <div className="flex items-start gap-3">
+                    {p.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.image_url}
+                        alt={p.name}
+                        className="h-12 w-16 shrink-0 rounded-md border border-gray-100 object-cover"
+                      />
+                    ) : null}
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href="/empresas"
+                        className="text-xs text-gray-400 hover:text-teal-700 hover:underline"
+                      >
+                        {p.categories?.name}
+                      </Link>
+                      <p className="mt-1 font-medium text-gray-900">{p.name}</p>
+                    </div>
+                  </div>
+                  {p.description ? (
+                    <p className="mt-2 text-xs leading-relaxed text-gray-500">{truncate(p.description, 140)}</p>
+                  ) : null}
+                  <div className="mt-3 flex flex-wrap items-center gap-3">
+                    <Link
+                      href="/empresas"
+                      className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
+                    >
+                      Ver detalles →
+                    </Link>
+                    {productUrl ? (
+                      <a
+                        href={productUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-gray-500 hover:text-teal-700 hover:underline"
+                      >
+                        Ver en el sitio del banco ↗
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </>
       ) : null}
