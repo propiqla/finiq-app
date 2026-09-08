@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Tell the browser this page is light-only, so Chromium/Edge's automatic
+     "darken web content" features don't try to auto-invert or dim text that
+     doesn't have a very strong explicit color. Carried over from propiqla-app
+     where this fixed washed-out table text. */
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Intentionally no dark-mode media query — see propiqla-app/app/globals.css
+   for the original reasoning. FinIQ doesn't use the `dark:` Tailwind variant
+   anywhere, so every gray/text color is tuned for a light background. */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
