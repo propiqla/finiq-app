@@ -76,7 +76,7 @@ export default function ArticleDetailClient({ params }: { params: Promise<{ slug
     return (
       <div className="mx-auto max-w-2xl px-6 py-10">
         <p className="text-gray-700">No encontramos este artículo.</p>
-        <Link href="/finiq/aprende" className="mt-2 inline-block text-teal-700">
+        <Link href="/aprende" className="mt-2 inline-block text-teal-700">
           Ver todos los artículos →
         </Link>
       </div>
@@ -127,7 +127,7 @@ export default function ArticleDetailClient({ params }: { params: Promise<{ slug
 
       {relatedCategorySlug ? (
         <Link
-          href={`/finiq/categorias/${relatedCategorySlug}`}
+          href={`/categorias/${relatedCategorySlug}`}
           className="mt-8 inline-block rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800"
         >
           Comparar productos relacionados →

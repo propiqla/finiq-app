@@ -67,7 +67,7 @@ export default function ActualidadIndex() {
           {articles.map((a) => (
             <Link
               key={a.slug}
-              href={`/finiq/actualidad/${a.slug}`}
+              href={`/actualidad/${a.slug}`}
               className="block rounded-2xl border border-gray-100 p-4 transition hover:border-gray-200"
             >
               <span className="rounded-full bg-[#FDECD8] px-2 py-0.5 text-[10px] font-medium text-[#8A4B0A]">

@@ -67,7 +67,7 @@ export default function FinIqHome() {
           className="mt-5 flex max-w-md gap-2"
           onSubmit={(e) => {
             e.preventDefault()
-            window.location.href = '/finiq/categorias'
+            window.location.href = '/categorias'
           }}
         >
           <input
@@ -87,7 +87,7 @@ export default function FinIqHome() {
       {/* Business teaser */}
       <section className="pb-6 pt-6">
         <Link
-          href="/finiq/empresas"
+          href="/empresas"
           className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#EEF6FC] px-5 py-3 transition hover:bg-[#E6F1FB]"
         >
           <div>
@@ -110,7 +110,7 @@ export default function FinIqHome() {
             {articles.map((a) => (
               <Link
                 key={a.slug}
-                href={`/finiq/aprende/${a.slug}`}
+                href={`/aprende/${a.slug}`}
                 className="rounded-2xl border border-gray-100 bg-[#F4FBF8] p-4 transition hover:border-gray-200"
               >
                 <span className="rounded-full bg-[#EAF3DE] px-2 py-0.5 text-[10px] font-medium text-[#3B6D11]">

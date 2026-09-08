@@ -70,7 +70,7 @@ export default function ExchangeRateTicker() {
           animation-play-state: paused;
         }
       `}</style>
-      <Link href="/finiq/indicadores" className="block">
+      <Link href="/indicadores" className="block">
         <div className="rate-track flex w-max items-center gap-8 px-6">
           {looped.map((item, i) => (
             <span key={i} className="flex shrink-0 items-center gap-2 whitespace-nowrap text-xs">

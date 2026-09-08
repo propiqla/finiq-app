@@ -179,7 +179,7 @@ export default function ArticleForm({ articleId }: { articleId?: string }) {
           .insert({ ...payload, published_at: publish ? new Date().toISOString() : null })
         if (error) { setSaveError(`Error al guardar: ${error.message}`); return }
       }
-      router.push('/finiq/admin/articulos')
+      router.push('/admin/articulos')
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Error inesperado al guardar')
     } finally {
@@ -204,7 +204,7 @@ export default function ArticleForm({ articleId }: { articleId?: string }) {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">
-      <Link href="/finiq/admin/articulos" className="mb-1 block text-sm font-medium text-gray-400 hover:text-gray-600">
+      <Link href="/admin/articulos" className="mb-1 block text-sm font-medium text-gray-400 hover:text-gray-600">
         ← Artículos
       </Link>
       <h1 className="mb-8 text-xl font-semibold text-gray-900">{isEdit ? 'Editar artículo' : 'Nuevo artículo'}</h1>
@@ -311,7 +311,7 @@ export default function ArticleForm({ articleId }: { articleId?: string }) {
           >
             {saving ? 'Guardando…' : statusValue === 'published' ? 'Guardar y mantener publicado' : 'Publicar'}
           </button>
-          <Link href="/finiq/admin/articulos" className="ml-auto text-sm text-gray-400 transition hover:text-gray-600">
+          <Link href="/admin/articulos" className="ml-auto text-sm text-gray-400 transition hover:text-gray-600">
             Cancelar
           </Link>
         </div>

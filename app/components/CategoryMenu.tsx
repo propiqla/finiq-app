@@ -24,7 +24,7 @@ type Category = {
 
 export default function CategoryMenu() {
   const pathname = usePathname()
-  const isEmpresas = pathname?.startsWith('/finiq/empresas')
+  const isEmpresas = pathname?.startsWith('/empresas')
   const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function CategoryMenu() {
             return (
               <Link
                 key={cat.id}
-                href={`/finiq/categorias/${cat.slug}`}
+                href={`/categorias/${cat.slug}`}
                 className="group flex w-20 shrink-0 snap-start flex-col items-center gap-2 text-center"
               >
                 <div

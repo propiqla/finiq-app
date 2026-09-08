@@ -36,7 +36,7 @@ export default async function AlertasPage({
   return (
     <div className="mx-auto max-w-lg px-6 py-16 text-center">
       {content}
-      <Link href="/finiq" className="mt-6 inline-block text-teal-700 hover:underline">
+      <Link href="/" className="mt-6 inline-block text-teal-700 hover:underline">
         ← Volver a FinIQ
       </Link>
     </div>

@@ -234,7 +234,7 @@ export default function FinanciarPropiedadClient() {
                     <div>
                       <p className="text-sm font-medium text-gray-900">
                         {p.institutions ? (
-                          <Link href={`/finiq/bancos/${p.institutions.slug}`} className="hover:text-teal-700 hover:underline">
+                          <Link href={`/bancos/${p.institutions.slug}`} className="hover:text-teal-700 hover:underline">
                             {p.institutions.name}
                           </Link>
                         ) : null}
@@ -310,7 +310,7 @@ export default function FinanciarPropiedadClient() {
 
       <p className="mt-8 text-xs text-gray-400">
         ¿Prefieres ver todos los créditos hipotecarios en una tabla?{' '}
-        <Link href="/finiq/categorias/prestamos-hipotecarios" className="text-teal-700 hover:underline">
+        <Link href="/categorias/prestamos-hipotecarios" className="text-teal-700 hover:underline">
           Ver comparación completa →
         </Link>
       </p>

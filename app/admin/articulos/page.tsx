@@ -127,7 +127,7 @@ export default function ArticlesAdmin() {
           <p className="mt-1 text-sm text-gray-600">Contenido de Aprende y Actualidad.</p>
         </div>
         <Link
-          href="/finiq/admin/articulos/nuevo"
+          href="/admin/articulos/nuevo"
           className="rounded-full bg-teal-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-800"
         >
           + Nuevo artículo
@@ -194,7 +194,7 @@ export default function ArticlesAdmin() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        href={`/finiq/admin/articulos/${a.id}`}
+                        href={`/admin/articulos/${a.id}`}
                         className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-600 transition hover:border-teal-400 hover:text-teal-700"
                       >
                         Editar

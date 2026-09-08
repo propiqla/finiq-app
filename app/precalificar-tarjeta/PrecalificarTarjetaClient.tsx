@@ -313,7 +313,7 @@ export default function PrecalificarTarjetaClient() {
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {p.institutions ? (
-                      <Link href={`/finiq/bancos/${p.institutions.slug}`} className="hover:text-amber-700 hover:underline">
+                      <Link href={`/bancos/${p.institutions.slug}`} className="hover:text-amber-700 hover:underline">
                         {p.institutions.name}
                       </Link>
                     ) : null}
@@ -409,7 +409,7 @@ export default function PrecalificarTarjetaClient() {
 
       <p className="mt-8 text-xs text-gray-400">
         ¿Prefieres ver todas las tarjetas en una tabla?{' '}
-        <Link href="/finiq/categorias/tarjetas-credito" className="text-amber-700 hover:underline">
+        <Link href="/categorias/tarjetas-credito" className="text-amber-700 hover:underline">
           Ver comparación completa →
         </Link>
       </p>

@@ -69,7 +69,7 @@ export default function NuevosProductos() {
         {products.map((p) => (
           <Link
             key={p.id}
-            href={p.institutions ? `/finiq/bancos/${p.institutions.slug}` : '/finiq/categorias'}
+            href={p.institutions ? `/bancos/${p.institutions.slug}` : '/categorias'}
             className="rounded-2xl border border-gray-100 bg-[#F5F0FC] p-4 transition hover:border-gray-200"
           >
             <div className="mb-2 flex items-center justify-between gap-2">

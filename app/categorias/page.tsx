@@ -54,7 +54,7 @@ export default function CategoriasIndex() {
             return (
               <Link
                 key={cat.id}
-                href={`/finiq/categorias/${cat.slug}`}
+                href={`/categorias/${cat.slug}`}
                 className={`rounded-2xl border border-gray-100 p-5 transition hover:border-gray-200 ${style.bg}`}
               >
                 <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg ${style.iconBg}`}>
@@ -69,7 +69,7 @@ export default function CategoriasIndex() {
       )}
 
       <Link
-        href="/finiq/empresas"
+        href="/empresas"
         className="mt-8 flex items-center justify-between rounded-2xl bg-[#EEF6FC] px-5 py-4 text-sm font-medium text-[#0C447C] transition hover:bg-[#E6F1FB]"
       >
         Buscas productos para tu empresa? <span>Ver Empresas →</span>

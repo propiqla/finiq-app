@@ -51,7 +51,7 @@ export default function InstitutionTicker() {
           return (
             <Link
               key={`${inst.slug}-${i}`}
-              href={`/finiq/bancos/${inst.slug}`}
+              href={`/bancos/${inst.slug}`}
               className={`flex h-12 w-28 shrink-0 items-center justify-center rounded-full px-3 py-1.5 text-center text-xs font-medium leading-tight transition hover:opacity-80 ${color.bg} ${color.text}`}
             >
               <span className="line-clamp-2">{inst.name}</span>

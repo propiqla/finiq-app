@@ -88,7 +88,7 @@ export default function BankProfileClient({ params }: { params: Promise<{ slug: 
     return (
       <div className="mx-auto max-w-4xl px-6 py-10">
         <p className="text-gray-700">No encontramos esta institución.</p>
-        <Link href="/finiq/categorias" className="mt-2 inline-block text-teal-700">
+        <Link href="/categorias" className="mt-2 inline-block text-teal-700">
           Ver categorías →
         </Link>
       </div>
@@ -170,7 +170,7 @@ export default function BankProfileClient({ params }: { params: Promise<{ slug: 
             <div key={p.id} className="rounded-xl border border-gray-100 p-4 transition hover:border-gray-200">
               <div className="flex items-center justify-between">
                 <Link
-                  href={`/finiq/categorias/${p.categories?.slug ?? ''}`}
+                  href={`/categorias/${p.categories?.slug ?? ''}`}
                   className="text-xs text-gray-400 hover:text-teal-700 hover:underline"
                 >
                   {p.categories?.name}
@@ -207,7 +207,7 @@ export default function BankProfileClient({ params }: { params: Promise<{ slug: 
             {businessProducts.map((p) => (
               <div key={p.id} className="rounded-xl border border-gray-100 p-4 transition hover:border-gray-200">
                 <Link
-                  href="/finiq/empresas"
+                  href="/empresas"
                   className="text-xs text-gray-400 hover:text-teal-700 hover:underline"
                 >
                   {p.categories?.name}

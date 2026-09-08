@@ -86,7 +86,7 @@ export default function EmpresasHome() {
                     {catProducts.map((p) => (
                       <li key={p.id} className="text-sm text-gray-700">
                         {p.institutions ? (
-                          <Link href={`/finiq/bancos/${p.institutions.slug}`} className="hover:text-teal-700">
+                          <Link href={`/bancos/${p.institutions.slug}`} className="hover:text-teal-700">
                             {p.institutions.name} — {p.name}
                           </Link>
                         ) : (
@@ -102,7 +102,7 @@ export default function EmpresasHome() {
         </div>
       )}
 
-      <Link href="/finiq" className="mt-8 inline-block text-sm font-medium text-teal-700">
+      <Link href="/" className="mt-8 inline-block text-sm font-medium text-teal-700">
         ← Volver a productos personales
       </Link>
     </div>

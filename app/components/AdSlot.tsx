@@ -90,7 +90,7 @@ export default function AdSlot({
   if (sponsor) {
     return (
       <Link
-        href={`/finiq/bancos/${sponsor.institution.slug}`}
+        href={`/bancos/${sponsor.institution.slug}`}
         className={`block rounded-2xl border border-gray-100 bg-[#FDF6EA] px-5 py-4 transition hover:border-gray-200 ${className}`}
       >
         <span className="rounded-full bg-[#FAEEDA] px-2 py-0.5 text-[10px] font-medium text-[#854F0B]">

@@ -204,7 +204,7 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
     return (
       <div className="mx-auto max-w-5xl px-6 py-10">
         <p className="text-gray-700">No encontramos esta categoría.</p>
-        <Link href="/finiq/categorias" className="mt-2 inline-block text-teal-700">
+        <Link href="/categorias" className="mt-2 inline-block text-teal-700">
           Ver todas las categorías →
         </Link>
       </div>
@@ -452,7 +452,7 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
                     <td className="px-4 py-3 text-right">
                       {p.institutions ? (
                         <Link
-                          href={`/finiq/bancos/${p.institutions.slug}`}
+                          href={`/bancos/${p.institutions.slug}`}
                           className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
                         >
                           Ver →
@@ -500,7 +500,7 @@ export default function CategoryDetailClient({ params }: { params: Promise<{ slu
                     <td className="px-4 py-3 text-right">
                       {p.institutions ? (
                         <Link
-                          href={`/finiq/bancos/${p.institutions.slug}`}
+                          href={`/bancos/${p.institutions.slug}`}
                           className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
                         >
                           Ver →

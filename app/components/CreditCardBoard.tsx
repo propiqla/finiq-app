@@ -144,7 +144,7 @@ function CardTile({ p, highlight }: { p: CardProduct; highlight?: boolean }) {
         ) : null}
         {p.institutions ? (
           <Link
-            href={`/finiq/bancos/${p.institutions.slug}`}
+            href={`/bancos/${p.institutions.slug}`}
             className="rounded-full border border-gray-200 px-4 py-1.5 text-xs font-medium text-gray-700 hover:border-teal-600 hover:text-teal-700"
           >
             Ver banco →

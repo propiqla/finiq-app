@@ -16,14 +16,14 @@ import { getCategoryStyle } from '../lib/categoryPresentation'
 type Intent = { slug: string; label: string; href: string }
 
 const INTENTS: Intent[] = [
-  { slug: 'prestamos-hipotecarios', label: 'Comprar una propiedad', href: '/finiq/financiar-propiedad' },
-  { slug: 'financiamiento-comercial', label: 'Financiar mi empresa', href: '/finiq/empresas' },
-  { slug: 'prestamos-vehiculo', label: 'Comprar un vehículo', href: '/finiq/categorias/prestamos-vehiculo' },
-  { slug: 'tarjetas-credito', label: 'Conseguir una tarjeta', href: '/finiq/precalificar-tarjeta' },
-  { slug: 'cuentas-ahorro', label: 'Abrir una cuenta en dólares', href: '/finiq/categorias/cuentas-ahorro' },
-  { slug: 'inversiones', label: 'Invertir', href: '/finiq/categorias/inversiones' },
-  { slug: 'remesas', label: 'Mover dinero internacionalmente', href: '/finiq/categorias/remesas' },
-  { slug: 'seguros', label: 'Protegerme / asegurarme', href: '/finiq/categorias/seguros' },
+  { slug: 'prestamos-hipotecarios', label: 'Comprar una propiedad', href: '/financiar-propiedad' },
+  { slug: 'financiamiento-comercial', label: 'Financiar mi empresa', href: '/empresas' },
+  { slug: 'prestamos-vehiculo', label: 'Comprar un vehículo', href: '/categorias/prestamos-vehiculo' },
+  { slug: 'tarjetas-credito', label: 'Conseguir una tarjeta', href: '/precalificar-tarjeta' },
+  { slug: 'cuentas-ahorro', label: 'Abrir una cuenta en dólares', href: '/categorias/cuentas-ahorro' },
+  { slug: 'inversiones', label: 'Invertir', href: '/categorias/inversiones' },
+  { slug: 'remesas', label: 'Mover dinero internacionalmente', href: '/categorias/remesas' },
+  { slug: 'seguros', label: 'Protegerme / asegurarme', href: '/categorias/seguros' },
 ]
 
 export default function IntentGrid() {
