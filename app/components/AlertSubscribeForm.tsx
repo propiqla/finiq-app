@@ -24,7 +24,7 @@ export default function AlertSubscribeForm(props: Props) {
     setErrorMsg(null)
 
     try {
-      const res = await fetch('/api/finiq/alerts/subscribe', {
+      const res = await fetch('/api/alerts/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(
