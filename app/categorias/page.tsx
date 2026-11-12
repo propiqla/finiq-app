@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { supabaseBanking } from '../lib/supabase-banking'
 import CategoryGraphic from '../components/CategoryGraphic'
@@ -13,30 +11,23 @@ type Category = {
   description: string | null
 }
 
-export default function CategoriasIndex() {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [error, setError] = useState<string | null>(null)
+export const revalidate = 300
 
-  useEffect(() => {
-    let cancelled = false
-    const load = async () => {
-      const { data, error } = await supabaseBanking
-        .from('categories')
-        .select('id, slug, name, description')
-        .lt('display_order', 150)
-        .order('display_order')
-      if (cancelled) return
-      if (error) {
-        setError(error.message)
-        return
-      }
-      setCategories(data ?? [])
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [])
+export const metadata: Metadata = {
+  title: 'Comparar cuentas, tarjetas, préstamos y más en Venezuela | FinIQ.ve',
+  description:
+    'Todas las categorías de productos financieros en Venezuela: cuentas, tarjetas de crédito y débito, préstamos, remesas, seguros e inversiones.',
+  alternates: { canonical: '/categorias' },
+}
+
+export default async function CategoriasIndex() {
+  const { data, error: queryError } = await supabaseBanking
+    .from('categories')
+    .select('id, slug, name, description')
+    .lt('display_order', 150)
+    .order('display_order')
+  const categories: Category[] = data ?? []
+  const error = queryError?.message ?? null
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">

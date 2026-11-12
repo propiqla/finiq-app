@@ -33,6 +33,43 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
 }
 
+export const revalidate = 300
+
 export default async function BankProfile({ params }: { params: Params }) {
-  return <BankProfileClient params={params} />
+  const { slug } = await params
+  const { data: institution } = await supabaseBanking
+    .from('institutions')
+    .select('id, name, description')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  let products: { name: string }[] = []
+  if (institution) {
+    const { data } = await supabaseBanking
+      .from('products')
+      .select('name')
+      .eq('institution_id', institution.id)
+      .eq('active', true)
+      .order('name')
+      .limit(60)
+    products = data ?? []
+  }
+
+  return (
+    <>
+      {institution ? (
+        <section className="mx-auto max-w-5xl px-6 pt-8">
+          <h2 className="mb-2 text-base font-semibold text-gray-900">{institution.name}: tasas y productos</h2>
+          <p className="text-sm leading-6 text-gray-600">
+            {institution.description ??
+              `Compara las tasas, tarjetas y productos de ${institution.name} en Venezuela, con datos verificados y su fuente.`}{' '}
+            {products.length > 0
+              ? `Productos que listamos hoy: ${products.map((p) => p.name).join(', ')}.`
+              : ''}
+          </p>
+        </section>
+      ) : null}
+      <BankProfileClient params={params} />
+    </>
+  )
 }

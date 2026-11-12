@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { supabaseBanking } from '../lib/supabase-banking'
 
@@ -21,31 +19,23 @@ const CONTENT_TYPE_LABEL: Record<string, string> = {
 
 const dateFormatter = new Intl.DateTimeFormat('es-VE', { day: 'numeric', month: 'long', year: 'numeric' })
 
-export default function ActualidadIndex() {
-  const [articles, setArticles] = useState<Article[]>([])
-  const [error, setError] = useState<string | null>(null)
+export const revalidate = 300
 
-  useEffect(() => {
-    let cancelled = false
-    const load = async () => {
-      const { data, error } = await supabaseBanking
-        .from('articles')
-        .select('slug, title, excerpt, content_type, published_at')
-        .eq('status', 'published')
-        .eq('section', 'actualidad')
-        .order('published_at', { ascending: false })
-      if (cancelled) return
-      if (error) {
-        setError(error.message)
-        return
-      }
-      setArticles(data ?? [])
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [])
+export const metadata: Metadata = {
+  title: 'Actualidad: noticias de banca y finanzas en Venezuela | FinIQ.ve',
+  description: 'Cambios regulatorios, tasas del BCV y tendencias de la banca venezolana, explicados en lenguaje simple.',
+  alternates: { canonical: '/actualidad' },
+}
+
+export default async function ActualidadIndex() {
+  const { data, error: queryError } = await supabaseBanking
+    .from('articles')
+    .select('slug, title, excerpt, content_type, published_at')
+    .eq('status', 'published')
+    .eq('section', 'actualidad')
+    .order('published_at', { ascending: false })
+  const articles: Article[] = data ?? []
+  const error = queryError?.message ?? null
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">

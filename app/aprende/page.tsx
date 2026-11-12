@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { supabaseBanking } from '../lib/supabase-banking'
 
@@ -19,31 +17,23 @@ const CONTENT_TYPE_LABEL: Record<string, string> = {
   comparativa: 'Comparativa',
 }
 
-export default function AprendeIndex() {
-  const [articles, setArticles] = useState<Article[]>([])
-  const [error, setError] = useState<string | null>(null)
+export const revalidate = 300
 
-  useEffect(() => {
-    let cancelled = false
-    const load = async () => {
-      const { data, error } = await supabaseBanking
-        .from('articles')
-        .select('slug, title, excerpt, content_type, reading_time_minutes')
-        .eq('status', 'published')
-        .eq('section', 'aprende')
-        .order('published_at', { ascending: false })
-      if (cancelled) return
-      if (error) {
-        setError(error.message)
-        return
-      }
-      setArticles(data ?? [])
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [])
+export const metadata: Metadata = {
+  title: 'Aprende: guías y glosario financiero de Venezuela | FinIQ.ve',
+  description: 'Guías, glosario y comparativas para entender el sistema financiero venezolano: tasas, UVC, tarjetas, ahorro y más.',
+  alternates: { canonical: '/aprende' },
+}
+
+export default async function AprendeIndex() {
+  const { data, error: queryError } = await supabaseBanking
+    .from('articles')
+    .select('slug, title, excerpt, content_type, reading_time_minutes')
+    .eq('status', 'published')
+    .eq('section', 'aprende')
+    .order('published_at', { ascending: false })
+  const articles: Article[] = data ?? []
+  const error = queryError?.message ?? null
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
