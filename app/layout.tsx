@@ -18,6 +18,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  // Makes canonical / OpenGraph URLs absolute (they were rendering as "/aprende").
+  metadataBase: new URL('https://finiq.propiqla.com'),
   title: 'FinIQ Venezuela — Comparador financiero',
   description:
     'Compara bancos, tarjetas, préstamos y billeteras digitales en Venezuela — gratis, claro y sin registro.',
