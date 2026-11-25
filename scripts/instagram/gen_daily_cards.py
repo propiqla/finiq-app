@@ -166,8 +166,28 @@ def slide2(data, out_path):
     ax.tick_params(colors="#8E94B8", labelsize=15)
     ax.set_xlim(xmin - xpad*0.3, xmax + xpad)
 
-    ax.plot(dates_bcv, vals_bcv, color="#42D6FF", linewidth=4.5, solid_capstyle="round", label="Oficial BCV")
-    ax.plot(dates_par, vals_par, color="#FF5CA8", linewidth=4.5, solid_capstyle="round", label="Paralelo")
+    # Never draw a line across days with no data: break the line where consecutive
+    # points are more than MAX_GAP_DAYS apart (weekends/holidays are <= 4 days).
+    MAX_GAP_DAYS = 4
+    def plot_segments(dates, vals, color, label):
+        seg_d, seg_v, first = [], [], True
+        def flush():
+            nonlocal first
+            if seg_d:
+                ax.plot(seg_d, seg_v, color=color, linewidth=4.5, solid_capstyle="round",
+                        label=label if first else None)
+                if len(seg_d) == 1:
+                    ax.scatter(seg_d, seg_v, color=color, s=40, zorder=4)
+                first = False
+        for d, v in zip(dates, vals):
+            if seg_d and (d - seg_d[-1]).days > MAX_GAP_DAYS:
+                flush()
+                seg_d, seg_v = [], []
+            seg_d.append(d); seg_v.append(v)
+        flush()
+
+    plot_segments(dates_bcv, vals_bcv, "#42D6FF", "Oficial BCV")
+    plot_segments(dates_par, vals_par, "#FF5CA8", "Paralelo")
 
     ax.scatter([dates_bcv[-1]], [vals_bcv[-1]], color="#42D6FF", s=110, zorder=5, edgecolor="#0A0C17", linewidth=2)
     ax.scatter([dates_par[-1]], [vals_par[-1]], color="#FF5CA8", s=110, zorder=5, edgecolor="#0A0C17", linewidth=2)
@@ -183,7 +203,9 @@ def slide2(data, out_path):
         label.set_ha("center")
         label.set_rotation(0)
 
-    fig.savefig("/tmp/_chart_raw.png", facecolor=fig.get_facecolor())
+    import tempfile, os
+    chart_raw = os.path.join(tempfile.gettempdir(), f"_chart_raw_{os.getpid()}.png")
+    fig.savefig(chart_raw, facecolor=fig.get_facecolor())
     plt.close(fig)
 
     # Compose full branded slide with PIL
@@ -198,7 +220,7 @@ def slide2(data, out_path):
     draw.text((60, 180), data["date_label"], font=f_date, fill=TXT_DIM)
 
     CHART_Y = 240
-    chart = Image.open("/tmp/_chart_raw.png").convert("RGB")
+    chart = Image.open(chart_raw).convert("RGB")
     img.paste(chart, (0, CHART_Y))
     draw = ImageDraw.Draw(img)
 

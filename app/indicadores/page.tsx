@@ -202,6 +202,36 @@ export default function Indicadores() {
     return out
   }
 
+  // Distinct sources behind the data, with coverage, so every figure is attributable.
+  const dataSources = (() => {
+    const map = new Map<
+      string,
+      { rate_type: string; base_currency: string; source_name: string; source_url: string | null; count: number; first: string; last: string }
+    >()
+    for (const r of rates) {
+      const key = `${r.rate_type}|${r.base_currency}|${r.source_name}`
+      const cur = map.get(key)
+      if (!cur) {
+        map.set(key, {
+          rate_type: r.rate_type,
+          base_currency: r.base_currency,
+          source_name: r.source_name,
+          source_url: r.source_url ?? null,
+          count: 1,
+          first: r.effective_date,
+          last: r.effective_date,
+        })
+      } else {
+        cur.count += 1
+        if (r.effective_date < cur.first) cur.first = r.effective_date
+        if (r.effective_date > cur.last) cur.last = r.effective_date
+      }
+    }
+    return [...map.values()].sort((a, b) =>
+      `${a.rate_type}${a.base_currency}${a.first}`.localeCompare(`${b.rate_type}${b.base_currency}${b.first}`)
+    )
+  })()
+
   const usdGapSeriesFull = buildGapSeries(usdBcvHistory, usdParaleloHistory)
   const usdGapSeries = filterByRange(usdGapSeriesFull, range)
 
@@ -218,9 +248,9 @@ export default function Indicadores() {
       <h1 className="mb-2 text-2xl font-semibold text-gray-900">Tipo de cambio</h1>
       <p className="mb-8 max-w-xl text-gray-600">
         Comparamos la tasa oficial del Banco Central de Venezuela con una tasa de referencia del
-        mercado paralelo, siempre citando la fuente exacta y la fecha de cada dato. Capturamos una
-        foto real de cada tasa todos los días para construir una tendencia genuina — nunca
-        estimamos ni rellenamos días que no observamos directamente.
+        mercado paralelo, siempre citando la fuente exacta y la fecha de cada dato. Todas las cifras
+        provienen de observaciones reales de una fuente identificada (ver «Fuentes de datos» al final
+        de la página); nunca estimamos ni interpolamos valores para días sin dato.
       </p>
 
       <div className="mb-8 rounded-2xl border border-gray-100 bg-gray-50 p-5">
@@ -321,9 +351,45 @@ export default function Indicadores() {
               referencia del mercado informal (no regulada), útil para entender la brecha
               cambiaria, pero no es una tasa oficial ni la usa la banca para sus operaciones. El
               rango de 30 días es un dato publicado por la fuente del mercado paralelo; los gráficos
-              de tendencia se construyen solo con capturas diarias reales, nunca con datos
-              estimados o interpolados.
+              de tendencia se construyen solo con datos reales de las fuentes listadas abajo, nunca
+              con valores estimados o interpolados.
             </p>
+          </div>
+
+          <div className="mt-4 rounded-xl border border-gray-100 px-5 py-4 text-xs text-gray-500">
+            <p className="mb-2 font-medium text-gray-600">Fuentes de datos</p>
+            <ul className="space-y-2">
+              {dataSources.map((s) => (
+                <li key={`${s.rate_type}|${s.base_currency}|${s.source_name}`}>
+                  <span className="font-medium text-gray-600">
+                    {s.rate_type === 'bcv_oficial' ? 'Oficial BCV' : 'Paralelo'} ({s.base_currency})
+                  </span>
+                  {': '}
+                  {s.source_url ? (
+                    <a
+                      href={s.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-teal-700 hover:underline"
+                    >
+                      {s.source_name}
+                    </a>
+                  ) : (
+                    s.source_name
+                  )}
+                  {` — ${s.count} días, del ${s.first} al ${s.last}.`}
+                </li>
+              ))}
+            </ul>
+            {dataSources.filter((s) => s.rate_type === 'paralelo_referencial').length > 1 ? (
+              <p className="mt-3">
+                La serie del paralelo combina dos fuentes: el indicador referencial de dolarapi.com
+                (capturas diarias propias) y, para los días que no capturamos, el promedio diario del
+                USDT en Binance P2P publicado por El Cambio VE. Son mediciones distintas del mercado
+                informal y pueden diferir ligeramente (alrededor de 1–2 %). Cada día tiene una sola cifra
+                de paralelo, de la fuente indicada arriba, y la brecha se calcula con esa cifra.
+              </p>
+            ) : null}
           </div>
         </>
       ) : null}
